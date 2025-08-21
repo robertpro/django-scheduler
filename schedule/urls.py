@@ -1,3 +1,4 @@
+from django.urls import path
 from django.urls import re_path
 from django.views.generic.list import ListView
 
@@ -23,7 +24,7 @@ from schedule.views import (
 )
 
 urlpatterns = [
-    re_path(r"^$", ListView.as_view(model=Calendar), name="calendar_list"),
+    path("", ListView.as_view(model=Calendar), name="calendar_list"),
     re_path(
         r"^calendar/year/(?P<calendar_slug>[-\w]+)/$",
         CalendarByPeriodsView.as_view(template_name="schedule/calendar_year.html"),
@@ -83,56 +84,56 @@ urlpatterns = [
         EditEventView.as_view(),
         name="edit_event",
     ),
-    re_path(r"^event/(?P<event_id>\d+)/$", EventView.as_view(), name="event"),
-    re_path(
-        r"^event/delete/(?P<event_id>\d+)/$",
+    path("event/<int:event_id>/", EventView.as_view(), name="event"),
+    path(
+        "event/delete/<int:event_id>/",
         DeleteEventView.as_view(),
         name="delete_event",
     ),
     # urls for already persisted occurrences
-    re_path(
-        r"^occurrence/(?P<event_id>\d+)/(?P<occurrence_id>\d+)/$",
+    path(
+        "occurrence/<int:event_id>/<int:occurrence_id>/",
         OccurrenceView.as_view(),
         name="occurrence",
     ),
-    re_path(
-        r"^occurrence/cancel/(?P<event_id>\d+)/(?P<occurrence_id>\d+)/$",
+    path(
+        "occurrence/cancel/<int:event_id>/<int:occurrence_id>/",
         CancelOccurrenceView.as_view(),
         name="cancel_occurrence",
     ),
-    re_path(
-        r"^occurrence/edit/(?P<event_id>\d+)/(?P<occurrence_id>\d+)/$",
+    path(
+        "occurrence/edit/<int:event_id>/<int:occurrence_id>/",
         EditOccurrenceView.as_view(),
         name="edit_occurrence",
     ),
     # urls for unpersisted occurrences
-    re_path(
-        r"^occurrence/(?P<event_id>\d+)/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/(?P<hour>\d+)/(?P<minute>\d+)/(?P<second>\d+)/$",
+    path(
+        "occurrence/<int:event_id>/<int:year>/<int:month>/<int:day>/<int:hour>/<int:minute>/<int:second>/",
         OccurrencePreview.as_view(),
         name="occurrence_by_date",
     ),
-    re_path(
-        r"^occurrence/cancel/(?P<event_id>\d+)/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/(?P<hour>\d+)/(?P<minute>\d+)/(?P<second>\d+)/$",
+    path(
+        "occurrence/cancel/<int:event_id>/<int:year>/<int:month>/<int:day>/<int:hour>/<int:minute>/<int:second>/",
         CancelOccurrenceView.as_view(),
         name="cancel_occurrence_by_date",
     ),
-    re_path(
-        r"^occurrence/edit/(?P<event_id>\d+)/(?P<year>\d+)/(?P<month>\d+)/(?P<day>\d+)/(?P<hour>\d+)/(?P<minute>\d+)/(?P<second>\d+)/$",
+    path(
+        "occurrence/edit/<int:event_id>/<int:year>/<int:month>/<int:day>/<int:hour>/<int:minute>/<int:second>/",
         CreateOccurrenceView.as_view(),
         name="edit_occurrence_by_date",
     ),
     # feed urls
-    re_path(
-        r"^feed/calendar/upcoming/(?P<calendar_id>\d+)/$",
+    path(
+        "feed/calendar/upcoming/<int:calendar_id>/",
         UpcomingEventsFeed(),
         name="upcoming_events_feed",
     ),
     re_path(r"^ical/calendar/(.*)/$", CalendarICalendar(), name="calendar_ical"),
     # api urls
     re_path(r"^api/occurrences", api_occurrences, name="api_occurrences"),
-    re_path(
-        r"^api/move_or_resize/$", api_move_or_resize_by_code, name="api_move_or_resize"
+    path(
+        "api/move_or_resize/", api_move_or_resize_by_code, name="api_move_or_resize"
     ),
-    re_path(r"^api/select_create/$", api_select_create, name="api_select_create"),
-    re_path(r"^$", ListView.as_view(queryset=Calendar.objects.all()), name="schedule"),
+    path("api/select_create/", api_select_create, name="api_select_create"),
+    path("", ListView.as_view(queryset=Calendar.objects.all()), name="schedule"),
 ]
